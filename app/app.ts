@@ -14,7 +14,7 @@ import {TRANSITION_IN_KEY, TRANSITION_OUT_KEY} from "./pages/gallery/PhotoViewer
     photoViewerLeave: TRANSITION_OUT_KEY
   },
   providers: getProviders(),
-  //prodMode: true
+  prodMode: true
 })
 export class MyApp {
   rootPage: any = GalleryPage;

@@ -32,3 +32,22 @@
 .dm-pull-right{
     float: right;
 }
+
+.modal-wrapper{
+  transform: translate3d(0, 0%, 0);
+  @media only screen and (min-width: 768) and (min-height: 768) {
+    position: absolute;
+    top: calc(50% - (600/2));
+    left: calc(50% - (600/2));
+
+    width: 600;
+    height: 600;
+  }
+}
+
+.contentContainer {
+  height: 100%;
+
+  @media only screen and (min-width: 768) and (min-height: 768) {
+  }
+}

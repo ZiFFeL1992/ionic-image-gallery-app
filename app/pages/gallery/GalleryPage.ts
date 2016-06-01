@@ -1,4 +1,4 @@
-import {Alert, NavController, Page} from "ionic-angular";
+import {Alert, Modal, NavController, Page} from "ionic-angular";
 
 import {PhotoViewerViewController} from "./PhotoViewerViewController";
 import {PhotoViewer} from "./PhotoViewer";
@@ -11,7 +11,7 @@ import {ImageEntity} from "../../utils/ImageEntity";
     <ion-navbar *navbar primary>
         <ion-title>Image Gallery</ion-title>
         <ion-buttons end>
-            <button (press)="loadGallery()">
+            <button (click)="loadGallery()">
                 <ion-icon name="refresh"></ion-icon>
             </button>
         </ion-buttons>
@@ -32,7 +32,7 @@ export class GalleryPage {
 
   private images:ImageEntity[];
   private NUM_IMAGES:number = 500;
-  private NUM_COLUMNS:number = 3;
+  private MIN_NUM_COLUMNS:number = 3;
   private MARGIN:number = 10;
   private IMAGE_SIZE:number;
   private galleryLoaded:boolean;
@@ -57,12 +57,15 @@ export class GalleryPage {
   }
 
   setDimensions(){
-    return Math.floor(window.innerWidth/this.NUM_COLUMNS);
+    let screenWidth = window.innerWidth;
+    var potentialNumColumns = Math.floor(screenWidth/120);
+    let NUM_COLUMNS = potentialNumColumns > this.MIN_NUM_COLUMNS ? potentialNumColumns : this.MIN_NUM_COLUMNS;
+    return Math.floor(window.innerWidth/NUM_COLUMNS);
   }
 
   imageClicked(imageEntity:ImageEntity, event:Event){
     var rect = (<HTMLElement>event.target).getBoundingClientRect();
-    let modal = PhotoViewerViewController.create({
+    let modal = Modal.create(PhotoViewer, {
       imageEntity:imageEntity
     });
     this.navController.present(modal, {
@@ -71,13 +74,8 @@ export class GalleryPage {
         startY: rect.top,
         width: rect.width,
         height: rect.height
-      }
+      },
+      animation: "photoViewerEnter"
     });
-
-    /*var alert = Alert.create({
-      message : "What up!"
-    });
-    this.navController.present(alert);
-    */
   }
 }

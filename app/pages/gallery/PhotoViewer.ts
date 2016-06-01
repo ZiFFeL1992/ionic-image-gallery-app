@@ -6,60 +6,11 @@ import {ImageEntity} from "../../utils/ImageEntity";
 
 
 @Page({
-  styles: [
-      `
-        .pv-btn-container{
-            position: absolute;
-            top: 0px;
-            left: 0px;
-            right: 0px;
-            background-color: red;
-            pointer-events: none;
-        }
-
-        .pv-show-cursor{
-            cursor: pointer;
-        }
-
-        .pv-img{
-            width: 105px;
-            height: 105px;
-
-            display: inline-block;
-        }
-
-        .wrapper{
-          position: relative;
-          height: 100%;
-          z-index: 10;
-        }
-
-        .stc-wrapper{
-            display: block;
-            height: 100%;
-        }
-
-        .stc-content {
-            height: 100%;
-        }
-
-      `
-  ],
   template: `
     <ion-content style="background-color: transparent;">
-        <div class="backdrop" #backdrop></div>
-        <div class="wrapper">
-        <div class="pv-btn-container" #btnContainer>
-          <div style="float: right">
-            <button large clear class="pv-show-cursor" (click)="dismissView()">
-                <ion-icon name="close"></ion-icon>
-            </button>
-          </div>
-        </div>
-          <div class="stc-content" #contentContainer (touchstart)="touchStart($event)" (touchend)="touchEnd($event)"  (touchmove)="touchMove($event)">
-            <img class="pv-image" [src]="imageEntity?.mediumSizeUrl"/>
-          </div>
-        </div>
+      <div class="contentContainer" #contentContainer (touchstart)="touchStart($event)" (touchend)="touchEnd($event)"  (touchmove)="touchMove($event)">
+      </div>
+      <img class="pv-image" [src]="imageEntity?.mediumSizeUrl"/>
     </ion-content>
   `
 })
@@ -72,7 +23,8 @@ export class PhotoViewer {
     protected mostRecentTouch:TouchCoordinate;
     protected TOUCH_DISTANCE_TRAVELED_THRESHOLD:number = .50;
 
-    @ViewChild("backdrop") backdrop:ElementRef;
+
+    protected backdrop:HTMLElement;
     @ViewChild("contentContainer") contentContainer:ElementRef;
     @ViewChild("btnContainer") btnContainer:ElementRef;
 
@@ -83,10 +35,17 @@ export class PhotoViewer {
 
     onPageWillEnter(){
       this.initialTouch = this.mostRecentTouch = null;
+      this.backdrop = <HTMLElement> document.querySelector(".backdrop");
+    }
+
+    onPageDidEnter(){
+      setTimeout( () => {
+        //this.dismissView();
+      }, 1000);
     }
 
     dismissView(){
-        this.viewController.dismiss();
+        this.viewController.dismiss(null, null, {animation: "photoViewerLeave"});
     }
 
     imageLoaded(event){
@@ -104,7 +63,7 @@ export class PhotoViewer {
     touchStart(event){
         this.initialTouch = new TouchCoordinate(event.touches[0].clientX, event.touches[0].clientY);
         this.mostRecentTouch = this.initialTouch;
-        this.animateButtonContainerOut();
+        //this.animateButtonContainerOut();
     }
 
     touchMove(event){
@@ -138,7 +97,7 @@ export class PhotoViewer {
             this.contentContainer.nativeElement.style.transform = `translate3d(0px, 0px, 0px)`;
             this.contentContainer.nativeElement.style.transition = `250ms ease`;
             //parent.style.opacity = `1.0`;
-            this.animationButtonContainerIn();
+            //this.animationButtonContainerIn();
             this.animateBackdropFadeReverse();
         }
         setTimeout(() => {
@@ -154,12 +113,12 @@ export class PhotoViewer {
       animation.fromTo('opacity', this.backdrop.nativeElement.style.opacity, `0 - ${percentageDragged}`);
       animation.play();
       */
-      this.backdrop.nativeElement.style.opacity = 1 - (percentageDragged * 2.0);
+      this.backdrop.style.opacity = `${1 - (percentageDragged * 2.0)}`;
     }
 
     animateBackdropFadeReverse(){
-      let animation = new Animation(this.backdrop.nativeElement);
-      animation.fromTo('opacity', this.backdrop.nativeElement.style.opacity, `1`);
+      let animation = new Animation(this.backdrop);
+      animation.fromTo('opacity', this.backdrop.style.opacity, `1`);
       animation.easing("ease").duration(250).play();
     }
 
