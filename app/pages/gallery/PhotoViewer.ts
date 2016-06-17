@@ -48,11 +48,11 @@ export class PhotoViewer {
       this.imageEntity = this.navParams.data.imageEntity;
     }
 
-    onPageWillEnter(){
+    ionViewWillEnter(){
       this.initialTouch = this.mostRecentTouch = null;
     }
 
-    onPageDidEnter(){
+    ionViewDidEnter(){
       // give a short buffer to make sure the transition is done
       setTimeout( () => {
           // DOM READ
